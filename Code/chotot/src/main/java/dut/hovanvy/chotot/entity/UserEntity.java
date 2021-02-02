@@ -4,14 +4,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 import javax.management.relation.Role;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,7 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Entity(name = "user")
+@Entity
+@Table(name = "user")
 public class UserEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -41,6 +35,9 @@ public class UserEntity implements Serializable {
 	
 	@Column(name = "password", nullable = false)
 	private String password;
+
+	@Column(name = "enable", nullable = false)
+	private boolean enable = false;
 	
 	@ManyToMany()
 	@JoinTable(
