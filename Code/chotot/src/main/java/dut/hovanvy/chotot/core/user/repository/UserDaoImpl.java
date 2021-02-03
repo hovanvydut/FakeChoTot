@@ -37,7 +37,9 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void save(UserEntity userEntity) {
         if (userEntity != null) {
-            this.entityManager.merge(userEntity);
+            UserEntity newUser = this.entityManager.merge(userEntity);
+            userEntity.setId(newUser.getId());
         }
     }
+
 }

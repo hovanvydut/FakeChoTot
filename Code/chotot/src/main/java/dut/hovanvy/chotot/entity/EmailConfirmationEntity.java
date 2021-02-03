@@ -33,4 +33,15 @@ public class EmailConfirmationEntity implements Serializable {
 
     @Column(name = "confirmed_at")
     private LocalDateTime confirmedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    public boolean isConfirmed() {
+        return this.confirmedAt != null;
+    }
+    public boolean isExpired() {
+        return this.expiredAt.isBefore(LocalDateTime.now());
+    }
 }

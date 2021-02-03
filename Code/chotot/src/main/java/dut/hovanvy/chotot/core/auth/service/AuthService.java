@@ -7,7 +7,7 @@ import dut.hovanvy.chotot.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
+import java.util.UUID;
 
 @AllArgsConstructor
 @Service
@@ -19,32 +19,36 @@ public class AuthService {
     public String register(RegisterRequestDto requestDto) {
 
         // sign up new user and get confirmation token
-        final String token = this.userService.createNewUser(
-                new UserEntity(
-                        0L,
-                        requestDto.getFirstName(),
-                        requestDto.getLastName(),
-                        requestDto.getEmail(),
-                        requestDto.getPassword(),
-                        false,
-                        null // enum ROLE_USER
-                ));
+        UserEntity userEntity = new UserEntity(
+                0L,
+                requestDto.getFirstName(),
+                requestDto.getLastName(),
+                requestDto.getEmail(),
+                requestDto.getPassword(),
+                false,
+                null // enum ROLE_USER
+        );
+        this.userService.createNewUser(userEntity);
+        System.out.println(userEntity);
+        // save new confirmation token into DB
+        final String confirmationToken = UUID.randomUUID().toString();
+        this.emailService.saveEmailConfirmationRegisterToken(confirmationToken, userEntity);
 
         // send email with confirmation token
         final String linkConfirmation =
-                "http://localhost:8080/api/v1/auth/register/confirm?token=" + token;
+                "http://localhost:8080/api/v1/auth/register/confirm?token=" + confirmationToken;
 
-        this.emailService.sendEmailConfirmation(
-                requestDto.getEmail(), buildEmail(requestDto.getFirstName(), linkConfirmation));
+        this.emailService.sendEmailConfirmationRegister(
+                requestDto.getEmail(), buildEmailConfirmationRegister(requestDto.getFirstName(), linkConfirmation));
 
         return null;
     }
 
-    public void confirmToken(final String token) {
-        
+    public void confirmTokenRegister(final String token) {
+        this.emailService.confirmEmailConfirmationRegisterToken(token);
     }
 
-    private String buildEmail(String name, String link) {
+    private String buildEmailConfirmationRegister(String name, String link) {
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +

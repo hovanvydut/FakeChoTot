@@ -4,7 +4,6 @@ import javax.validation.Valid;
 
 import dut.hovanvy.chotot.core.auth.service.AuthService;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import dut.hovanvy.chotot.api.v1.auth.dto.LoginRequestDto;
@@ -35,7 +34,7 @@ public class AuthController {
 	@GetMapping("/register/confirm")
 	public void confirmToken(@RequestParam("token") String token) {
 		if (token != null) {
-			this.authService.confirmToken(token);
+			this.authService.confirmTokenRegister(token);
 		}
 	}
 	
