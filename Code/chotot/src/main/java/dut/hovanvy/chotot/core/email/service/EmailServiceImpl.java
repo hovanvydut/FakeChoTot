@@ -14,9 +14,7 @@ import org.springframework.stereotype.Service;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 
 @AllArgsConstructor
@@ -70,7 +68,7 @@ public class EmailServiceImpl implements EmailService{
             EmailConfirmationEntity emailConfirmation = emailConfirmationOpt.get();
 
             if (emailConfirmation.isExpired()) {
-                System.out.println("TOken is expired");
+                System.out.println("Token is expired");
                 return;
             }
 

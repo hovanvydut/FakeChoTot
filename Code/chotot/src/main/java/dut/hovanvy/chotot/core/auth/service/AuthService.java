@@ -1,5 +1,6 @@
 package dut.hovanvy.chotot.core.auth.service;
 
+import dut.hovanvy.chotot.api.v1.auth.dto.LoginRequestDto;
 import dut.hovanvy.chotot.api.v1.auth.dto.RegisterRequestDto;
 import dut.hovanvy.chotot.core.email.service.EmailService;
 import dut.hovanvy.chotot.core.user.service.UserService;
@@ -8,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -17,7 +19,6 @@ public class AuthService {
     private final EmailService emailService;
 
     public String register(RegisterRequestDto requestDto) {
-
         // sign up new user and get confirmation token
         UserEntity userEntity = new UserEntity(
                 0L,
@@ -29,7 +30,7 @@ public class AuthService {
                 null // enum ROLE_USER
         );
         this.userService.createNewUser(userEntity);
-        System.out.println(userEntity);
+
         // save new confirmation token into DB
         final String confirmationToken = UUID.randomUUID().toString();
         this.emailService.saveEmailConfirmationRegisterToken(confirmationToken, userEntity);
@@ -42,6 +43,24 @@ public class AuthService {
                 requestDto.getEmail(), buildEmailConfirmationRegister(requestDto.getFirstName(), linkConfirmation));
 
         return null;
+    }
+
+    public void login(LoginRequestDto loginRequestDto) {
+        // get user by email, check exists, if exist then check enable, if !enable then notify and suggest re-send verify email
+        Optional<UserEntity> userOpt = this.userService.getUserByEmail(loginRequestDto.getEmail());
+
+        if (userOpt.isPresent()) {
+            UserEntity user = userOpt.get();
+
+            if (user.isEnable()) {
+                // check matched password
+            } else {
+                // notify that email is not confirmed and suggest re-send email (and should avoid spam email)
+            }
+        } else {
+            // notify email is not exists in DB;
+        }
+
     }
 
     public void confirmTokenRegister(final String token) {

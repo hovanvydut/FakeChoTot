@@ -35,6 +35,12 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
+    public Optional<UserEntity> findById(int id) {
+        UserEntity user = this.entityManager.find(UserEntity.class, id);
+        return Optional.ofNullable(user);
+    }
+
+    @Override
     public void save(UserEntity userEntity) {
         if (userEntity != null) {
             UserEntity newUser = this.entityManager.merge(userEntity);

@@ -7,6 +7,7 @@ import java.util.Optional;
 public interface UserDao {
 
     Optional<UserEntity> findByEmail(String email);
+    Optional<UserEntity> findById(int id);
     public void save(UserEntity userEntity);
 
 }

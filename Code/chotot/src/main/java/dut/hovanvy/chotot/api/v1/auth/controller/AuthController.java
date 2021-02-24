@@ -20,6 +20,7 @@ public class AuthController {
 
 	@PostMapping("/login")
 	public LoginResponseDto login(@Valid @RequestBody LoginRequestDto requestDto) {
+		this.authService.login(requestDto);
 		return null;
 	}
 	
@@ -27,7 +28,6 @@ public class AuthController {
 	public RegisterResponseDto register(@Valid @RequestBody RegisterRequestDto requestDto) {
 		this.authService.register(requestDto);
 		// return link confirmation token
-
 		return null;
 	}
 
