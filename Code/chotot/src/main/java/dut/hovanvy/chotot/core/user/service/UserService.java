@@ -6,6 +6,6 @@ import java.util.Optional;
 
 public interface UserService {
     public void createNewUser(UserEntity userEntity);
-    public Optional<UserEntity> getUserByEmail(String email);
+    public Optional<UserEntity> findUserByEmail(String email);
     public void enableUser(UserEntity userEntity);
 }

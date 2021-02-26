@@ -2,10 +2,12 @@ package dut.hovanvy.chotot.core.auth.service;
 
 import dut.hovanvy.chotot.api.v1.auth.dto.LoginRequestDto;
 import dut.hovanvy.chotot.api.v1.auth.dto.RegisterRequestDto;
+import dut.hovanvy.chotot.config.PasswordEncoder;
 import dut.hovanvy.chotot.core.email.service.EmailService;
 import dut.hovanvy.chotot.core.user.service.UserService;
 import dut.hovanvy.chotot.entity.UserEntity;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -17,6 +19,7 @@ public class AuthService {
 
     private final UserService userService;
     private final EmailService emailService;
+    private final PasswordEncoder passwordEncoder;
 
     public String register(RegisterRequestDto requestDto) {
         // sign up new user and get confirmation token
@@ -47,15 +50,26 @@ public class AuthService {
 
     public void login(LoginRequestDto loginRequestDto) {
         // get user by email, check exists, if exist then check enable, if !enable then notify and suggest re-send verify email
-        Optional<UserEntity> userOpt = this.userService.getUserByEmail(loginRequestDto.getEmail());
+        Optional<UserEntity> userOpt = this.userService.findUserByEmail(loginRequestDto.getEmail());
 
+        // Existing account with given email
         if (userOpt.isPresent()) {
             UserEntity user = userOpt.get();
 
+            // if user verified account with email confirmation
             if (user.isEnable()) {
-                // check matched password
+                BCryptPasswordEncoder bCryptPasswordEncoder = this.passwordEncoder.bCryptPasswordEncoder();
+                boolean isMatched = bCryptPasswordEncoder.matches(loginRequestDto.getPassword(), user.getPassword());
+
+                // correct password
+                if (isMatched) {
+                    
+                } else {
+
+                }
+
             } else {
-                // notify that email is not confirmed and suggest re-send email (and should avoid spam email)
+                // notify that user not confirmed and suggest re-send email (and should avoid spam email)
             }
         } else {
             // notify email is not exists in DB;
